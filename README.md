@@ -6,6 +6,8 @@ The backend API is the coordination layer for portfolio aggregation, market data
 
 This milestone provides a runnable Python 3.12+ FastAPI backend with typed Pydantic schemas, mock portfolio data, AI analysis endpoints backed by the local `ai-engine` service, and no real provider keys.
 
+The quote endpoint returns typed mock swap quotes only. It does not perform real DEX routing, build transactions, sign transactions, or use paid provider keys.
+
 ## Requirements
 
 - Python 3.12+
@@ -54,6 +56,7 @@ If `ai-engine` is unavailable or times out, the backend returns `503` with a typ
 
 - `GET /health`
 - `GET /v1/portfolio/{address}`
+- `GET /v1/quote`
 - `POST /v1/ai/analyze-portfolio`
 - `POST /v1/ai/analyze-token`
 
@@ -64,6 +67,10 @@ Interactive OpenAPI docs are available at `http://127.0.0.1:8000/docs` when the 
 ```bash
 curl http://127.0.0.1:8000/health
 curl http://127.0.0.1:8000/v1/portfolio/0x742d35Cc6634C0532925a3b844Bc454e4438f44e
+```
+
+```bash
+curl "http://127.0.0.1:8000/v1/quote?chain_id=1&token_in=0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee&token_out=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48&amount_in=1.5&slippage_bps=50"
 ```
 
 ```bash
@@ -120,6 +127,35 @@ No LLM keys, private keys, or transaction execution credentials are required for
 }
 ```
 
+## Quote Response Shape
+
+`GET /v1/quote` validates `token_in` and `token_out` as EVM token addresses and requires `amount_in > 0`.
+
+```json
+{
+  "chain_id": 1,
+  "token_in": "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+  "token_out": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+  "amount_in": "1.5",
+  "amount_out_estimate": "2700.000000",
+  "price_impact_percent": "0.12",
+  "slippage_bps": 50,
+  "route": [
+    {
+      "label": "Mock direct route",
+      "provider": "valthera-mock-quote-engine",
+      "token_in": "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "token_out": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+    }
+  ],
+  "gas_estimate": 150000,
+  "provider": "valthera-mock-quote-engine",
+  "warnings": ["Mock quote only. No DEX routing has been performed."],
+  "updated_at": "2026-07-02T20:00:00Z",
+  "is_mock": true
+}
+```
+
 ## Purpose
 
 Provide trusted backend services for the Valthera web app, AI engine, and future developer APIs.
@@ -129,6 +165,7 @@ Provide trusted backend services for the Valthera web app, AI engine, and future
 - Portfolio aggregation
 - Token metadata aggregation
 - Market data gateway
+- Mock quote engine
 - AI engine gateway via `AI_ENGINE_BASE_URL`
 - Wallet activity indexing
 - API rate limiting
