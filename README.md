@@ -28,6 +28,18 @@ On Windows PowerShell, activate the virtual environment with:
 
 The API will be available at `http://127.0.0.1:8000`.
 
+To connect backend AI routes to the AI engine, run `ai-engine` separately on port `8001`:
+
+```bash
+uvicorn app.main:app --reload --port 8001
+```
+
+Then set:
+
+```bash
+AI_ENGINE_BASE_URL=http://127.0.0.1:8001
+```
+
 ## Endpoints
 
 - `GET /health`
@@ -59,6 +71,13 @@ curl -X POST http://127.0.0.1:8000/v1/ai/analyze-token \
 ## Configuration
 
 Copy `.env.example` to `.env` for local overrides. Do not commit real secrets, private keys, or paid provider credentials.
+
+Useful local values:
+
+```bash
+CORS_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
+AI_ENGINE_BASE_URL=http://127.0.0.1:8001
+```
 
 ## Portfolio Response Shape
 
