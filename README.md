@@ -4,7 +4,7 @@ The backend API is the coordination layer for portfolio aggregation, market data
 
 ## MVP-003 FastAPI Skeleton
 
-This milestone provides a runnable Python 3.12+ FastAPI backend with typed Pydantic schemas, mock portfolio data, mock AI analysis endpoints, and no real provider keys.
+This milestone provides a runnable Python 3.12+ FastAPI backend with typed Pydantic schemas, mock portfolio data, AI analysis endpoints backed by the local `ai-engine` service, and no real provider keys.
 
 ## Requirements
 
@@ -28,7 +28,7 @@ On Windows PowerShell, activate the virtual environment with:
 
 The API will be available at `http://127.0.0.1:8000`.
 
-To connect backend AI routes to the AI engine, run `ai-engine` separately on port `8001`:
+Backend AI routes call `ai-engine`. Run `ai-engine` separately on port `8001`:
 
 ```bash
 uvicorn app.main:app --reload --port 8001
@@ -37,7 +37,17 @@ uvicorn app.main:app --reload --port 8001
 Then set:
 
 ```bash
-AI_ENGINE_BASE_URL=http://127.0.0.1:8001
+AI_ENGINE_BASE_URL=http://localhost:8001
+```
+
+If `ai-engine` is unavailable or times out, the backend returns `503` with a typed JSON error:
+
+```json
+{
+  "error": "ai_engine_unavailable",
+  "message": "AI engine is unavailable.",
+  "ai_engine_base_url": "http://localhost:8001"
+}
 ```
 
 ## Endpoints
@@ -76,8 +86,11 @@ Useful local values:
 
 ```bash
 CORS_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
-AI_ENGINE_BASE_URL=http://127.0.0.1:8001
+AI_ENGINE_BASE_URL=http://localhost:8001
+AI_ENGINE_TIMEOUT_SECONDS=5
 ```
+
+No LLM keys, private keys, or transaction execution credentials are required for local development.
 
 ## Portfolio Response Shape
 
@@ -116,7 +129,7 @@ Provide trusted backend services for the Valthera web app, AI engine, and future
 - Portfolio aggregation
 - Token metadata aggregation
 - Market data gateway
-- AI engine gateway
+- AI engine gateway via `AI_ENGINE_BASE_URL`
 - Wallet activity indexing
 - API rate limiting
 - Background jobs
