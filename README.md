@@ -41,7 +41,7 @@ Interactive OpenAPI docs are available at `http://127.0.0.1:8000/docs` when the 
 
 ```bash
 curl http://127.0.0.1:8000/health
-curl http://127.0.0.1:8000/v1/portfolio/0x123
+curl http://127.0.0.1:8000/v1/portfolio/0x742d35Cc6634C0532925a3b844Bc454e4438f44e
 ```
 
 ```bash
@@ -59,6 +59,34 @@ curl -X POST http://127.0.0.1:8000/v1/ai/analyze-token \
 ## Configuration
 
 Copy `.env.example` to `.env` for local overrides. Do not commit real secrets, private keys, or paid provider credentials.
+
+## Portfolio Response Shape
+
+`GET /v1/portfolio/{address}` validates that `address` is an EVM wallet address in `0x` plus 40 hexadecimal characters format.
+
+```json
+{
+  "wallet_address": "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
+  "chain_id": 1,
+  "total_value_usd": 6125.0,
+  "assets": [
+    {
+      "chain_id": 1,
+      "token_address": "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "symbol": "ETH",
+      "name": "Ether",
+      "balance": "1.2500",
+      "value_usd": 4375.0,
+      "allocation_percent": 71.43,
+      "risk_flags": []
+    }
+  ],
+  "allocation_percent": 100.0,
+  "risk_flags": ["mock_data"],
+  "updated_at": "2026-07-02T20:00:00Z",
+  "is_mock": true
+}
+```
 
 ## Purpose
 

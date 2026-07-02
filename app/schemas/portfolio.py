@@ -1,17 +1,25 @@
-from pydantic import BaseModel
+from datetime import datetime
+
+from pydantic import BaseModel, Field
 
 
-class TokenHolding(BaseModel):
+class PortfolioAsset(BaseModel):
     chain_id: int
     token_address: str
     symbol: str
     name: str
     balance: str
-    usd_value: float
+    value_usd: float = Field(..., ge=0)
+    allocation_percent: float = Field(..., ge=0, le=100)
+    risk_flags: list[str]
 
 
 class PortfolioResponse(BaseModel):
-    address: str
-    total_usd_value: float
-    holdings: list[TokenHolding]
+    wallet_address: str
+    chain_id: int
+    total_value_usd: float = Field(..., ge=0)
+    assets: list[PortfolioAsset]
+    allocation_percent: float = Field(..., ge=0, le=100)
+    risk_flags: list[str]
+    updated_at: datetime
     is_mock: bool = True
