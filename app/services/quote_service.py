@@ -1,45 +1,42 @@
-from datetime import UTC, datetime
-from decimal import Decimal, ROUND_DOWN
+from decimal import Decimal
 
-from app.schemas.quote import QuoteResponse, QuoteRouteStep
+from app.providers.base import QuoteProviderError, QuoteRequest
+from app.providers.service import QuoteProviderService
+from app.schemas.quote import QuoteResponse
 
-MOCK_PROVIDER = "valthera-mock-quote-engine"
-MOCK_RATE = Decimal("1800")
+quote_provider_service = QuoteProviderService()
 
 
-def get_mock_quote(
+def get_quote(
     chain_id: int,
     token_in: str,
     token_out: str,
     amount_in: Decimal,
     slippage_bps: int,
 ) -> QuoteResponse:
-    amount_out = (amount_in * MOCK_RATE).quantize(
-        Decimal("0.000001"),
-        rounding=ROUND_DOWN,
+    provider_quote = quote_provider_service.get_quote(
+        QuoteRequest(
+            chain_id=chain_id,
+            token_in=token_in,
+            token_out=token_out,
+            amount_in=amount_in,
+            slippage_bps=slippage_bps,
+        )
+    )
+    return QuoteResponse(
+        provider=provider_quote.provider,
+        chain_id=chain_id,
+        token_in=provider_quote.token_in,
+        token_out=provider_quote.token_out,
+        amount_in=provider_quote.amount_in,
+        amount_out=provider_quote.amount_out,
+        estimated_gas=provider_quote.estimated_gas,
+        price_impact=provider_quote.price_impact,
+        slippage_bps=slippage_bps,
+        route=provider_quote.route,
+        timestamp=provider_quote.timestamp,
+        warnings=provider_quote.warnings,
     )
 
-    return QuoteResponse(
-        chain_id=chain_id,
-        token_in=token_in,
-        token_out=token_out,
-        amount_in=amount_in,
-        amount_out_estimate=amount_out,
-        price_impact_percent=Decimal("0.12"),
-        slippage_bps=slippage_bps,
-        route=[
-            QuoteRouteStep(
-                label="Mock direct route",
-                provider=MOCK_PROVIDER,
-                token_in=token_in,
-                token_out=token_out,
-            )
-        ],
-        gas_estimate=150000,
-        provider=MOCK_PROVIDER,
-        warnings=[
-            "Mock quote only. No DEX routing has been performed.",
-            "No transaction has been built, signed, or submitted.",
-        ],
-        updated_at=datetime.now(UTC),
-    )
+
+__all__ = ["QuoteProviderError", "get_quote", "quote_provider_service"]

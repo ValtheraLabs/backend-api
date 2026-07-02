@@ -1,16 +1,20 @@
 import json
+from collections.abc import Callable
 
 import httpx
 from fastapi.testclient import TestClient
+from pytest import MonkeyPatch
 
 from app.main import app
 from app.services import ai_client
 
-
 client = TestClient(app)
 
 
-def _mock_ai_engine(monkeypatch, handler) -> None:
+def _mock_ai_engine(
+    monkeypatch: MonkeyPatch,
+    handler: Callable[[httpx.Request], httpx.Response],
+) -> None:
     transport = httpx.MockTransport(handler)
 
     def create_http_client() -> httpx.Client:
@@ -23,7 +27,7 @@ def _mock_ai_engine(monkeypatch, handler) -> None:
     monkeypatch.setattr(ai_client, "_create_http_client", create_http_client)
 
 
-def test_analyze_portfolio_uses_ai_engine(monkeypatch) -> None:
+def test_analyze_portfolio_uses_ai_engine(monkeypatch: MonkeyPatch) -> None:
     def handler(request: httpx.Request) -> httpx.Response:
         body = json.loads(request.content)
         assert request.method == "POST"
@@ -46,7 +50,10 @@ def test_analyze_portfolio_uses_ai_engine(monkeypatch) -> None:
                     }
                 ],
                 "recommended_actions": [],
-                "disclaimer": "Mock analysis for product development only. This is not financial advice.",
+                "disclaimer": (
+                    "Mock analysis for product development only. "
+                    "This is not financial advice."
+                ),
             },
         )
 
@@ -65,7 +72,7 @@ def test_analyze_portfolio_uses_ai_engine(monkeypatch) -> None:
     assert payload["insights"][0]["category"] == "Data completeness"
 
 
-def test_analyze_token_uses_ai_engine(monkeypatch) -> None:
+def test_analyze_token_uses_ai_engine(monkeypatch: MonkeyPatch) -> None:
     def handler(request: httpx.Request) -> httpx.Response:
         body = json.loads(request.content)
         assert request.method == "POST"
@@ -90,11 +97,16 @@ def test_analyze_token_uses_ai_engine(monkeypatch) -> None:
                 "recommended_actions": [
                     {
                         "label": "Verify token data",
-                        "rationale": "Review trusted market sources before making decisions.",
+                        "rationale": (
+                            "Review trusted market sources before making decisions."
+                        ),
                         "priority": "high",
                     }
                 ],
-                "disclaimer": "Mock analysis for product development only. This is not financial advice.",
+                "disclaimer": (
+                    "Mock analysis for product development only. "
+                    "This is not financial advice."
+                ),
             },
         )
 
@@ -113,7 +125,9 @@ def test_analyze_token_uses_ai_engine(monkeypatch) -> None:
     assert payload["recommended_actions"][0]["priority"] == "high"
 
 
-def test_analyze_token_returns_clear_error_when_ai_engine_unavailable(monkeypatch) -> None:
+def test_analyze_token_returns_clear_error_when_ai_engine_unavailable(
+    monkeypatch: MonkeyPatch,
+) -> None:
     def handler(request: httpx.Request) -> httpx.Response:
         raise httpx.ConnectError("connection refused", request=request)
 
@@ -134,7 +148,7 @@ def test_analyze_token_returns_clear_error_when_ai_engine_unavailable(monkeypatc
 
 
 def test_analyze_portfolio_returns_clear_error_on_ai_engine_timeout(
-    monkeypatch,
+    monkeypatch: MonkeyPatch,
 ) -> None:
     def handler(request: httpx.Request) -> httpx.Response:
         raise httpx.ReadTimeout("timed out", request=request)
