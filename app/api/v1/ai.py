@@ -9,8 +9,8 @@ from app.schemas.ai import (
     AnalyzeTokenRequest,
     AnalyzeTokenResponse,
 )
-from app.services.ai_service import analyze_portfolio, analyze_token
 from app.services.ai_client import AIEngineUnavailableError
+from app.services.ai_service import analyze_portfolio, analyze_token
 
 router = APIRouter(prefix="/ai", tags=["ai"])
 

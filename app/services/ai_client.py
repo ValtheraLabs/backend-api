@@ -1,3 +1,5 @@
+from typing import Any, cast
+
 import httpx
 from pydantic import BaseModel, Field, ValidationError
 
@@ -82,7 +84,7 @@ class AIEngineClient:
                 "AI engine returned an invalid response."
             ) from exc
 
-    def _post(self, path: str, payload: BaseModel) -> dict:
+    def _post(self, path: str, payload: BaseModel) -> dict[str, Any]:
         try:
             with _create_http_client() as client:
                 response = client.post(
@@ -90,7 +92,7 @@ class AIEngineClient:
                     json=payload.model_dump(exclude_none=True),
                 )
                 response.raise_for_status()
-                return response.json()
+                return cast(dict[str, Any], response.json())
         except ValueError as exc:
             raise AIEngineUnavailableError(
                 "AI engine returned an invalid response."

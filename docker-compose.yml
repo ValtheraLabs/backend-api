@@ -1,0 +1,26 @@
+services:
+  backend-api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      APP_ENV: local
+      APP_NAME: Valthera Backend API
+      APP_VERSION: 0.2.0
+      HOST: 0.0.0.0
+      PORT: 8000
+      AI_ENGINE_BASE_URL: http://host.docker.internal:8001
+      REDIS_URL: redis://redis:6379/0
+      DATABASE_URL: sqlite:///./valthera.db
+      LOG_LEVEL: INFO
+      QUOTE_CACHE_TTL: 10
+      RATE_LIMIT_REQUESTS: 120
+      RATE_LIMIT_WINDOW_SECONDS: 60
+      CORS_ORIGINS: http://localhost:3000,http://127.0.0.1:3000
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"

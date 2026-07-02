@@ -1,10 +1,11 @@
 from decimal import Decimal
 from typing import Annotated
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, HTTPException, Query, status
 
+from app.providers.base import QuoteProviderError
 from app.schemas.quote import QuoteResponse
-from app.services.quote_service import get_mock_quote
+from app.services.quote_service import get_quote as get_quote_service
 
 router = APIRouter(prefix="/quote", tags=["quote"])
 
@@ -33,10 +34,16 @@ def get_quote(
     amount_in: Annotated[Decimal, Query(..., gt=0)],
     slippage_bps: Annotated[int, Query(..., ge=0)],
 ) -> QuoteResponse:
-    return get_mock_quote(
-        chain_id=chain_id,
-        token_in=token_in,
-        token_out=token_out,
-        amount_in=amount_in,
-        slippage_bps=slippage_bps,
-    )
+    try:
+        return get_quote_service(
+            chain_id=chain_id,
+            token_in=token_in,
+            token_out=token_out,
+            amount_in=amount_in,
+            slippage_bps=slippage_bps,
+        )
+    except QuoteProviderError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail=str(exc),
+        ) from exc
