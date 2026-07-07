@@ -3,7 +3,9 @@ from typing import Annotated
 from fastapi import APIRouter, Path
 
 from app.schemas.portfolio import PortfolioResponse
-from app.services.portfolio_service import get_mock_portfolio
+from app.services.portfolio_service import (
+    get_portfolio as get_portfolio_service,
+)
 
 router = APIRouter(prefix="/portfolio", tags=["portfolio"])
 
@@ -22,4 +24,9 @@ def get_portfolio(
         ),
     ],
 ) -> PortfolioResponse:
-    return get_mock_portfolio(address)
+    try:
+        return get_portfolio_service(address)
+    except (ValueError, RuntimeError) as exc:
+        from fastapi import HTTPException, status
+
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc

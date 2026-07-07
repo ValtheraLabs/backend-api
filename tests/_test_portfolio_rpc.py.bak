@@ -1,0 +1,34 @@
+from datetime import UTC, datetime
+from decimal import Decimal
+from unittest.mock import MagicMock, patch
+
+import pytest
+from pytest import MonkeyPatch
+
+from app.schemas.portfolio import PortfolioResponse
+from app.services.portfolio_service import get_portfolio
+
+
+def test_get_portfolio_rejects_invalid_address() -> None:
+    with pytest.raises(ValueError, match="Invalid Ethereum address"):
+        get_portfolio("0x123")
+
+
+def test_get_portfolio_returns_typed_portfolio_response() -> None:
+    portfolio = get_portfolio("0x742d35Cc6634C0532925a3b844Bc454e4438f44e")
+
+    assert isinstance(portfolio, PortfolioResponse)
+    assert portfolio.wallet_address == "0x742d35Cc6634C0532925a3b844Bc454e4438f44e"
+    assert portfolio.total_value_usd >= 0
+    assert len(portfolio.assets) > 0
+    assert portfolio.is_mock is False
+
+
+def test_get_portfolio_returns_eth_balance() -> None:
+    portfolio = get_portfolio("0x742d35Cc6634C0532925a3b844Bc454e4438f44e")
+
+    eth_asset = next((a for a in portfolio.assets if a.symbol == "ETH"), None)
+    assert eth_asset is not None
+    assert float(eth_asset.balance) >= 0
+    assert eth_asset.value_usd >= 0
+    assert eth_asset.allocation_percent >= 0

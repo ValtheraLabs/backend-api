@@ -143,8 +143,8 @@ def test_analyze_token_returns_clear_error_when_ai_engine_unavailable(
     assert payload == {
         "error": "ai_engine_unavailable",
         "message": "AI engine is unavailable.",
-        "ai_engine_base_url": "http://localhost:8001",
     }
+    assert "ai_engine_base_url" not in payload
 
 
 def test_analyze_portfolio_returns_clear_error_on_ai_engine_timeout(
@@ -164,3 +164,4 @@ def test_analyze_portfolio_returns_clear_error_on_ai_engine_timeout(
     assert response.status_code == 503
     assert payload["error"] == "ai_engine_unavailable"
     assert payload["message"] == "AI engine request timed out."
+    assert "ai_engine_base_url" not in payload

@@ -1,7 +1,6 @@
 from fastapi import APIRouter, status
 from fastapi.responses import JSONResponse
 
-from app.core.config import settings
 from app.schemas.ai import (
     AIEngineErrorResponse,
     AnalyzePortfolioRequest,
@@ -19,7 +18,6 @@ def _ai_engine_unavailable_response(exc: AIEngineUnavailableError) -> JSONRespon
     body = AIEngineErrorResponse(
         error="ai_engine_unavailable",
         message=exc.message,
-        ai_engine_base_url=settings.ai_engine_base_url,
     )
     return JSONResponse(
         status_code=status.HTTP_503_SERVICE_UNAVAILABLE,

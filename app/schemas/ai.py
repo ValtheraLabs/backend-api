@@ -65,4 +65,3 @@ class AnalyzeTokenResponse(BaseModel):
 class AIEngineErrorResponse(BaseModel):
     error: str
     message: str
-    ai_engine_base_url: str

@@ -34,6 +34,13 @@ class Settings(BaseSettings):
         ge=1,
     )
 
+    zerox_api_key: str = Field(default="", alias="ZEROX_API_KEY")
+    oneinch_api_key: str = Field(default="", alias="ONEINCH_API_KEY")
+    web3_rpc_url_1: str = Field(
+        default="https://eth-mainnet.g.alchemy.com/v2/demo",
+        alias="WEB3_RPC_URL_1",
+    )
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",

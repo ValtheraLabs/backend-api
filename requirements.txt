@@ -8,3 +8,4 @@ ruff==0.15.20
 black==24.10.0
 mypy==1.14.1
 pre-commit==4.0.1
+web3==7.16.0

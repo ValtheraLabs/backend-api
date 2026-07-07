@@ -25,6 +25,7 @@ class StructuredLoggingMiddleware(BaseHTTPMiddleware):
         try:
             response = await call_next(request)
             status_code = response.status_code
+            response.headers["X-Request-ID"] = request_id
             return response
         finally:
             latency = round((monotonic() - started_at) * 1000, 2)
