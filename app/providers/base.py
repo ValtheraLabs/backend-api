@@ -24,6 +24,9 @@ class ProviderQuote(BaseModel):
     route: list[str]
     timestamp: datetime
     warnings: list[str]
+    to: str = ""
+    data: str = ""
+    value: str = "0"
 
 
 class QuoteProviderError(Exception):

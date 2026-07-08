@@ -36,6 +36,9 @@ def get_quote(
         route=provider_quote.route,
         timestamp=provider_quote.timestamp,
         warnings=provider_quote.warnings,
+        to=provider_quote.to,
+        data=provider_quote.data,
+        value=provider_quote.value,
     )
 
 

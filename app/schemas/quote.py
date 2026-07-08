@@ -18,3 +18,6 @@ class QuoteResponse(BaseModel):
     timestamp: datetime
     warnings: list[str]
     is_mock: bool = True
+    to: str = ""
+    data: str = ""
+    value: str = "0"

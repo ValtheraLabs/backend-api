@@ -72,6 +72,9 @@ class ZeroXProvider(QuoteProvider):
         estimated_gas = int(data.get("estimatedGas", 0))
         price_impact = Decimal(str(data.get("estimatedPriceImpact", "0")))
         sources = [s["name"] for s in data.get("sources", [])]
+        to = data.get("to", "")
+        tx_data = data.get("data", "")
+        value = data.get("value", "0")
 
         return ProviderQuote(
             provider=self.name,
@@ -84,6 +87,9 @@ class ZeroXProvider(QuoteProvider):
             route=sources or ["0x API route"],
             timestamp=datetime.now(UTC),
             warnings=[],
+            to=to,
+            data=tx_data,
+            value=value,
         )
 
     @staticmethod
