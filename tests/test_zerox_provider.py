@@ -126,7 +126,8 @@ def test_get_quote_includes_api_key_header(monkeypatch: MonkeyPatch) -> None:
     assert headers.get("0x-api-key") == "sk-test-api-key-123"
 
 
-def test_get_quote_raises_when_no_api_key_configured() -> None:
-    provider = ZeroXProvider(api_key="")
+def test_get_quote_raises_when_no_api_key_configured(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr("app.core.config.settings.zerox_api_key", "")
+    provider = ZeroXProvider(api_key=None)
     with pytest.raises(QuoteProviderError, match="0x API key not configured"):
         provider.get_quote(_request())
