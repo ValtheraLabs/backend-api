@@ -60,7 +60,7 @@ def test_analyze_portfolio_uses_ai_engine(monkeypatch: MonkeyPatch) -> None:
     _mock_ai_engine(monkeypatch, handler)
 
     response = client.post(
-        "/v1/ai/analyze-portfolio",
+        "/api/v1/ai/analyze-portfolio",
         json={"address": "0x123", "chain_id": 1},
     )
 
@@ -113,7 +113,7 @@ def test_analyze_token_uses_ai_engine(monkeypatch: MonkeyPatch) -> None:
     _mock_ai_engine(monkeypatch, handler)
 
     response = client.post(
-        "/v1/ai/analyze-token",
+        "/api/v1/ai/analyze-token",
         json={"token_address": "0xabc", "chain_id": 1, "symbol": "VAL"},
     )
 
@@ -134,7 +134,7 @@ def test_analyze_token_returns_clear_error_when_ai_engine_unavailable(
     _mock_ai_engine(monkeypatch, handler)
 
     response = client.post(
-        "/v1/ai/analyze-token",
+        "/api/v1/ai/analyze-token",
         json={"token_address": "0xabc", "chain_id": 1, "symbol": "VAL"},
     )
 
@@ -156,7 +156,7 @@ def test_analyze_portfolio_returns_clear_error_on_ai_engine_timeout(
     _mock_ai_engine(monkeypatch, handler)
 
     response = client.post(
-        "/v1/ai/analyze-portfolio",
+        "/api/v1/ai/analyze-portfolio",
         json={"address": "0x123", "chain_id": 1},
     )
 

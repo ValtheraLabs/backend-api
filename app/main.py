@@ -37,6 +37,3 @@ app.add_middleware(RateLimitMiddleware)
 app.add_middleware(StructuredLoggingMiddleware)
 
 app.include_router(v1_router, prefix=settings.api_v1_prefix)
-
-# Temporary compatibility while clients migrate from MVP paths to /api/v1.
-app.include_router(v1_router, prefix="/v1")

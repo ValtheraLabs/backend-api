@@ -6,7 +6,7 @@ class Settings(BaseSettings):
     app_env: str = Field(default="local", alias="APP_ENV")
     app_name: str = Field(default="Valthera Backend API", alias="APP_NAME")
     app_version: str = Field(default="0.2.0", alias="APP_VERSION")
-    host: str = Field(default="0.0.0.0", alias="HOST")
+    host: str = Field(default="127.0.0.1", alias="HOST")
     port: int = Field(default=8000, alias="PORT", ge=1, le=65535)
 
     api_v1_prefix: str = Field(default="/api/v1", alias="API_V1_PREFIX")
@@ -40,7 +40,7 @@ class Settings(BaseSettings):
         default="https://eth-mainnet.g.alchemy.com/v2/demo",
         alias="WEB3_RPC_URL_1",
     )
-    jwt_secret_key: str = Field(default="change-me-in-production", alias="JWT_SECRET_KEY")
+    jwt_secret_key: str = Field(alias="JWT_SECRET_KEY")
 
     model_config = SettingsConfigDict(
         env_file=".env",

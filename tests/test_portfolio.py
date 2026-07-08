@@ -31,7 +31,7 @@ def _mock_web3(monkeypatch: MonkeyPatch) -> MagicMock:
 def test_get_portfolio_returns_typed_payload(monkeypatch: MonkeyPatch) -> None:
     _mock_web3(monkeypatch)
 
-    response = client.get(f"/v1/portfolio/{VALID_ADDRESS}")
+    response = client.get(f"/api/v1/portfolio/{VALID_ADDRESS}")
 
     assert response.status_code == 200
     payload = response.json()
@@ -43,6 +43,6 @@ def test_get_portfolio_returns_typed_payload(monkeypatch: MonkeyPatch) -> None:
 
 
 def test_get_portfolio_rejects_invalid_evm_address() -> None:
-    response = client.get("/v1/portfolio/0x123")
+    response = client.get("/api/v1/portfolio/0x123")
 
     assert response.status_code == 422

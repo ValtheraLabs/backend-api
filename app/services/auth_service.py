@@ -8,7 +8,7 @@ from app.core.config import settings
 from app.models.user import User
 
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24  # 24 hours
+ACCESS_TOKEN_EXPIRE_MINUTES = 60  # 1 hour
 
 
 def hash_password(password: str) -> str:
